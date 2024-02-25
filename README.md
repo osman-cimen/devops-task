@@ -5,10 +5,12 @@ Start the dockerized web-apllication(php) with <<./launcher.sh>> command
 
 **Purpose of each file in this task:**
 
-**apache-config.conf**
+**apache-config.conf:**
+
 configuration snippet sets up a virtual host to serve content from a specific document root directory, defines access control and directory options for that directory, and specifies the locations for error and access logs.
 
 **Dockerfile for PHP:**
+
 An environment for executing a PHP web application with the Apache web server is built up by this Dockerfile. This is a succinct explanation:
 
 Base Graphic: It begins with the php:8.3-apache base image, which comes with PHP version 8.3 and the Apache web server.
@@ -30,7 +32,9 @@ Port Exposure: To enable external connections to the Apache web server, port 80 
 
 Last but not least, it identifies the command to be executed upon container startup. The Apache web server (apache2-foreground) is started, and PHP is used to run the index.php file.
 
+
 **QuickDbTest.php**
+
 
 This PHP script establishes a connection to a SQL Server database, loads some data into it, builds a table if one doesn't already exist, and then extracts and exports the data in JSON format. This is a succinct explanation:
 
@@ -48,7 +52,9 @@ JSON Output: A QuickDbTest class instance is created, the runDbTest() function i
 
 All in all, this script shows how to use PDO to connect with a database in PHP, managing errors and producing JSON output.
 
+
 **init.sql**
+
 
 This PHP script establishes a connection to a SQL Server database, loads some data into it, builds a table if one doesn't already exist, and then extracts and exports the data in JSON format. This is a succinct explanation:
 
@@ -65,7 +71,9 @@ The runDbTest() Method
 GO: An additional GO batch separator.
 This script, in its entirety, creates a new database called db_vero_digital and then changes the database context to it. In SQL scripts, it's standard practice to build a database and start running statements in it right away.
 
+
 **docker-compose.yml**
+
 
 The services for a PHP web application (app), a SQL Server database (sqlserver), and a SQL Server configurator (sqlserver.configurator) are defined in this Docker Compose file. This is a succinct explanation:
 Version: Indicates the Docker Compose file syntax version that is in use. It is version 3.8 in this instance.
@@ -78,6 +86,8 @@ sqlserver: Makes use of the official Docker image for SQL Server 2022. establish
 The SQL Server image is used by sqlserver.configurator. mounts a local directory called "./init" that contains SQL scripts for database initialization. It is contingent upon the health of the SQL Server service. When it starts up, sqlcmd is used to run the SQL script and initialize the database.
 All in all, this Docker Compose file configures a PHP web application and SQL Server database in a development environment and makes sure the SQL Server database is initialized with the necessary information when it starts up.
 
+
 **launcher.sh**
+
 
 This script is a straightforward Bash script that launches containers specified in a docker-compose.yml file using Docker Compose.
