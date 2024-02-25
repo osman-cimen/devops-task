@@ -1,0 +1,60 @@
+version: '3.8'
+
+volumes:
+  sqlserver_data:
+
+services:
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: php-app
+    ports:
+      - "80:80"
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    restart: always
+    depends_on:
+      - sqlserver
+    networks:
+      - devops_task_network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Un!q@to2023
+      - MSSQL_PID=Developer
+    ports:
+      - 1433:1433
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Un!q@to2023 -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
+    networks:
+      - devops_task_network
+
+  sqlserver.configurator:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    command: >
+      bash -c '
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Un!q@to2023 -d master -i docker-entrypoint-initdb.d/init.sql;
+      echo "All done!";
+      '
+    networks:
+      - devops_task_network
+
+networks:
+  devops_task_network:
+    driver: bridge
